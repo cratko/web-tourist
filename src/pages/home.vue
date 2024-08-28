@@ -48,7 +48,10 @@ export default {
             </f7-tabs>
     </f7-block>
 
-        <Map />
+    <f7-block strong inset>
+      <Map />
+    </f7-block>
+        
     </div>
 
   </f7-page>
