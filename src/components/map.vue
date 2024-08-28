@@ -12,38 +12,54 @@
     >
       <yandex-map-default-scheme-layer/>
     </yandex-map>
-    <button @click="locateMe">Get location</button>
+    <f7-button @click="locateMe">Get location</f7-button>
 </template>
   
-<script setup lang="ts">
+<script lang="ts">
 import { shallowRef, ref } from 'vue';
 import type { YMap } from '@yandex/ymaps3-types';
 import { YandexMap, YandexMapDefaultSchemeLayer } from 'vue-yandex-maps';
 
-locateMe();
-console.log(currentLocation.value)
+export default {
+    setup() {
+        const map = shallowRef<null | YMap>(null);
+        const currentLocation = ref();
 
-//Можно использовать для различных преобразований
-const map = shallowRef<null | YMap>(null);
-const currentLocation = ref([]);
+        return {map, currentLocation}
 
-const getCurrentLocation = async() => {
-    return new Promise((resolve, reject) => {
-
+    },
+    created() {
+    //do we support geolocation
     if(!("geolocation" in navigator)) {
-    reject(new Error('Geolocation is not available.'));
+      console.log('Geolocation is not available.');
+      return;
     }
 
+    // get position
     navigator.geolocation.getCurrentPosition(pos => {
-    resolve(pos);
+      this.currentLocation = pos;
+
     }, err => {
-    reject(err);
-    });
+      console.log(err.message);
+    })
+    },
+    methods: {
+        locateMe() {
+            if(!("geolocation" in navigator)) {
+            console.log('Geolocation is not available.');
+            return;
+            }
 
-    });
+            // get position
+            navigator.geolocation.getCurrentPosition(pos => {
+            this.currentLocation = pos;
+
+            }, err => {
+            console.log(err.message);
+            })
+        }
+    }
 }
 
-const locateMe = async() => {
-    currentLocation.value = getCurrentLocation();
-}
+
 </script>
