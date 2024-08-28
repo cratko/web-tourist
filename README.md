@@ -2,6 +2,7 @@
 
 ## Версия 0.0.1beta
 - Базовый UI с картой текущего местоположения и тестовой меткой
+![example](./example.png)
 
 ## Framework7 CLI Options
 
