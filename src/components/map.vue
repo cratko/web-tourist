@@ -1,85 +1,80 @@
 <template>
-    <div class="center-preloader">
-        <f7-preloader color="orange" />
-    </div>
-    <div class="tabs">
-    <div class="tabs_header">
-        <div
-            class="tabs_header_tab"
-            :class="{ 'tabs_header_tab--active': tab === 'description' }"
-            @click="tab = 'description'"
-        >
-            Описание
-        </div>
-        <div
-            class="tabs_header_tab"
-            :class="{ 'tabs_header_tab--active': tab === 'map' }"
-            @click="tab = 'map'"
-        >
-            Карта
-        </div>
-    </div>
-    <div class="tabs_content">
-        <div
-            v-if="tab === 'description'"
-            class="tabs_content_description"
-        >
-            Скрипты Яндекса подгрузятся, когда вы переключите вкладки сверху - и не секундой раньше!
-        </div>
-        <yandex-map
-            v-else-if="tab === 'map'"
-            :height="height"
-            :settings="{
-                location: {
-                    center,
-                    zoom,
-                },
-                theme,
-                showScaleInCopyrights: true,
-            }"
-            :width="width"
-        >
-            <yandex-map-default-scheme-layer/>
-            <yandex-map-default-features-layer/>
+    <yandex-map
+    v-model="map"
+    :height="height"
+    real-settings-location
+    :settings="{
+        location: {
+            ...LOCATION,
+            duration: 2500,
+        },
+        camera,
+        theme,
+        showScaleInCopyrights: true,
+    }"
+    :width="width"
+>
+    <yandex-map-default-scheme-layer/>
 
-            <yandex-map-controls :settings="{ position: 'top right' }">
-                <yandex-map-control-button :settings="{ onClick: () => showMarker1 = !showMarker1 }">
-                    Показать маркер 1
-                </yandex-map-control-button>
-                <yandex-map-control-button :settings="{ onClick: () => showMarker2 = !showMarker2 }">
-                    Показать маркер 2
-                </yandex-map-control-button>
-            </yandex-map-controls>
+    <yandex-map-controls :settings="{ position: 'bottom left' }">
+        <template v-if="!locationChanged">
+            <yandex-map-control-button
+                :settings="{ onClick: () => [LOCATION = NEW_LOCATION_CENTER, camera.tilt = (45 * Math.PI) / 180, locationChanged = true]}"
+            >
+                Изменить Center
+            </yandex-map-control-button>
+            <yandex-map-control-button
+                :settings="{ onClick: () => [LOCATION = NEW_LOCATION_BOUNDS, camera.tilt = (45 * Math.PI) / 180, locationChanged = true]}"
+            >
+                Изменить Bounds
+            </yandex-map-control-button>
+        </template>
+        <yandex-map-control-button
+            v-else
+            :settings="{ onClick: () => [LOCATION = OLD_LOCATION, camera.tilt = 0, locationChanged = false]}"
+        >
+            Вернуться назад
+        </yandex-map-control-button>
+    </yandex-map-controls>
+</yandex-map>
 
-            <yandex-map-marker
-                v-if="showMarker1"
-                :settings="{ coordinates: [center[0] + 0.1, center[1] + 0.1]}"
-            >
-                Маркер 1
-            </yandex-map-marker>
-            <yandex-map-marker
-                v-if="showMarker2"
-                :settings="{ coordinates: center }"
-            >
-                Маркер 2
-            </yandex-map-marker>
-        </yandex-map>
-    </div>
-</div>
 </template>
 
-<script setup>
-import {
-    YandexMap,
-    YandexMapControlButton,
-    YandexMapControls,
-    YandexMapDefaultFeaturesLayer,
-    YandexMapDefaultSchemeLayer,
-    YandexMapMarker,
-} from 'vue-yandex-maps';
-import { ref } from 'vue';
+<script setup lang="ts">
+import { YandexMap, YandexMapControlButton, YandexMapControls, YandexMapDefaultSchemeLayer } from 'vue-yandex-maps';
+import { ref, shallowRef, watch } from 'vue';
+import type { YMap, YMapCameraRequest } from '@yandex/ymaps3-types';
+import type { YMapLocationRequest } from '@yandex/ymaps3-types/imperative/YMap';
 
-const tab = ref('description');
-const showMarker1 = ref(false);
-const showMarker2 = ref(false);
+const map = shallowRef<YMap | null>(null);
+const locationChanged = ref(false);
+
+const camera = ref<YMapCameraRequest>({
+    duration: 2500,
+});
+
+const LOCATION = ref<YMapLocationRequest>({
+    center: [37.623082, 55.75254], // starting position [lng, lat]
+    zoom: 5, // starting zoom
+});
+
+// eslint-disable-next-line vue/no-ref-object-reactivity-loss
+const OLD_LOCATION = ref<YMapLocationRequest>(LOCATION.value);
+
+watch(LOCATION, (_, oldValue) => {
+    OLD_LOCATION.value = oldValue;
+});
+
+const NEW_LOCATION_CENTER: YMapLocationRequest = {
+    center: [2.294587, 48.859958], // [lng, lat]
+    zoom: 16.6,
+};
+
+const NEW_LOCATION_BOUNDS: YMapLocationRequest = {
+    bounds: [
+        [-74.045667, 40.690044], // bounds - the boundaries of the visible area of the map
+        [-74.043567, 40.688628], // [[lng, lat], [lng, lat]].
+    ],
+    zoom: 16.6,
+};
 </script>
