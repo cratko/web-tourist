@@ -1,1 +1,5 @@
 /* Your app custom styles here */
+.left-menu-link {
+    flex-direction: row !important;
+    gap: 12px !important;
+}
