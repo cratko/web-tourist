@@ -67,4 +67,25 @@ const NEW_LOCATION_BOUNDS: YMapLocationRequest = {
     ],
     zoom: 16.6,
 };
+
+function getCurrentLocation(): Promise<{ latitude: number; longitude: number }> {
+    return new Promise((resolve, reject) => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    resolve({ latitude, longitude });
+                },
+                (error) => {
+                    reject(`Ошибка получения местоположения: ${error.message}`);
+                }
+            );
+        } else {
+            reject("Геолокация не поддерживается вашим браузером.");
+        }
+    });
+}
+
+let pos = await getCurrentLocation();
 </script>
