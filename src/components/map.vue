@@ -3,8 +3,8 @@
         v-model="map"
         :settings="{
           location: {
-            center: [currentLocation.coords.latitude ? currentLocation.coords.latitude : 0, 
-                        currentLocation.coords.longitude ? currentLocation.coords.longitude : 0],
+            center: [currentLocation.coords.latitude, 
+                        currentLocation.coords.longitude],
             zoom: 9,
           },
         }"
@@ -54,6 +54,7 @@ export default {
             // get position
             navigator.geolocation.getCurrentPosition(pos => {
             this.currentLocation = pos;
+            console.log(this.currentLocation.coords)
 
             }, err => {
             console.log(err.message);
