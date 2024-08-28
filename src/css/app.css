@@ -3,3 +3,7 @@
     flex-direction: row !important;
     gap: 12px !important;
 }
+
+.main-block {
+    height: 85vh;
+}

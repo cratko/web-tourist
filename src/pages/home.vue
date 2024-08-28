@@ -17,7 +17,7 @@ export default {
 
     <div class="grid grid-cols-2 grid-gap">
         
-        <f7-block strong inset>
+        <f7-block strong inset class="main-block">
 
             <f7-block-title>
               Strong Inset Block
@@ -48,7 +48,7 @@ export default {
             </f7-tabs>
     </f7-block>
 
-    <f7-block strong inset>
+    <f7-block strong inset class="main-block">
       <Map />
     </f7-block>
         
