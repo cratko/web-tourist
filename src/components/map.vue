@@ -87,5 +87,4 @@ function getCurrentLocation(): Promise<{ latitude: number; longitude: number }> 
     });
 }
 
-let pos = await getCurrentLocation();
 </script>
