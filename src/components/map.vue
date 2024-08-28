@@ -3,7 +3,8 @@
         v-model="map"
         :settings="{
           location: {
-            center: [currentLocation.coords.latitude, currentLocation.coords.longitude],
+            center: [currentLocation.coords.latitude ? currentLocation.coords.latitude : 0, 
+                        currentLocation.coords.longitude ? currentLocation.coords.longitude : 0],
             zoom: 9,
           },
         }"
