@@ -1,90 +1,136 @@
 <template>
-    <yandex-map
+<yandex-map
     v-model="map"
     :height="height"
-    real-settings-location
     :settings="{
         location: {
-            ...LOCATION,
-            duration: 2500,
+            center: [37.537, 55.749],
+            zoom: 17,
         },
-        camera,
+        camera: { azimuth: mapAzimuth, tilt: mapTilt, duration: hasAutoRotate ? 0 : 250 },
         theme,
         showScaleInCopyrights: true,
     }"
     :width="width"
 >
     <yandex-map-default-scheme-layer/>
-
-    <yandex-map-controls :settings="{ position: 'bottom left' }">
-        <template v-if="!locationChanged">
-            <yandex-map-control-button
-                :settings="{ onClick: () => [LOCATION = NEW_LOCATION_CENTER, camera.tilt = (45 * Math.PI) / 180, locationChanged = true]}"
+    <yandex-map-default-features-layer/>
+    <yandex-map-default-marker
+        :settings="{
+            coordinates: [37.537, 55.749],
+            title: 'Marker with slot',
+            subtitle: 'Marker with slot description',
+            color: 'green',
+            popup: { position: 'top' },
+        }"
+    >
+        <template #popup="{ close }">
+            <div
+                class="marker-popup"
+                @click="close()"
             >
-                Текущее местоположение
-            </yandex-map-control-button>
+                Click me to close popup
+            </div>
         </template>
+    </yandex-map-default-marker>
+    <yandex-map-listener :settings="{ onActionStart: () => hasAutoRotate = false }"/>
+     <yandex-map-controls :settings="{ position: 'right' }">
+        <yandex-map-zoom-control/>
+    </yandex-map-controls>
+    <yandex-map-controls :settings="{ position: 'top' }">
+        <yandex-map-control-button
+            :settings="{ color: '#fff', background: hasAutoRotate ? '#fd6466e6' : '#007afce6', onClick: () => hasAutoRotate = !hasAutoRotate }"
+        >
+            Авто-поворот
+        </yandex-map-control-button>
+        <yandex-map-control-button :settings="{ onClick: () => updateCamera('azimuth', 'minus') }">
+            Поворот влево
+        </yandex-map-control-button>
+        <yandex-map-control-button :settings="{ onClick: () => updateCamera('azimuth', 'plus') }">
+            Поворот вправо
+        </yandex-map-control-button>
+        <yandex-map-control-button :settings="{ onClick: () => updateCamera('tilt', 'minus') }">
+            Наклон наверх
+        </yandex-map-control-button>
+        <yandex-map-control-button :settings="{ onClick: () => updateCamera('tilt', 'plus') }">
+            Наклон вниз
+        </yandex-map-control-button>
+
+    </yandex-map-controls>
+    <yandex-map-controls :settings="{ position: 'left' }">
+        <yandex-map-geolocation-control/>
     </yandex-map-controls>
 
 </yandex-map>
-
 </template>
 
 <script setup lang="ts">
-import { YandexMap, YandexMapControlButton, YandexMapControls, YandexMapDefaultSchemeLayer } from 'vue-yandex-maps';
-import { ref, shallowRef, watch } from 'vue';
-import type { YMap, YMapCameraRequest } from '@yandex/ymaps3-types';
-import type { YMapLocationRequest } from '@yandex/ymaps3-types/imperative/YMap';
+import {
+    YandexMap,
+    YandexMapControlButton,
+    YandexMapControls,
+    YandexMapDefaultSchemeLayer,
+    YandexMapListener,
+    YandexMapGeolocationControl,
+    YandexMapZoomControl,
+    YandexMapMarker,
+    YandexMapDefaultFeaturesLayer,
+    YandexMapDefaultMarker,
+} from 'vue-yandex-maps';
+import { nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import type { YMap } from '@yandex/ymaps3-types';
 
+const hasAutoRotate = ref(true);
+const mapAzimuth = ref(0);
+const mapTilt = ref((40 * Math.PI) / 180);
+const frame = ref<null | number>(null);
 const map = shallowRef<YMap | null>(null);
-const locationChanged = ref(false);
 
-const camera = ref<YMapCameraRequest>({
-    duration: 2500,
-});
+// Automatically rotate the camera
+const startAutoRotationCamera = () => {
+    if (!map.value) return;
 
-const LOCATION = ref<YMapLocationRequest>({
-    center: [37.623082, 55.75254], // starting position [lng, lat]
-    zoom: 5, // starting zoom
-});
+    if (hasAutoRotate.value) {
+        //  Divide degrees by 100 to slow rotation to ~20 degrees / sec
+        mapAzimuth.value = map.value.azimuth + ((10 * Math.PI) / 180 / 100);
+        // Request the next frame of the animation
+        frame.value = requestAnimationFrame(startAutoRotationCamera);
 
-// eslint-disable-next-line vue/no-ref-object-reactivity-loss
-const OLD_LOCATION = ref<YMapLocationRequest>(LOCATION.value);
-
-watch(LOCATION, (_, oldValue) => {
-    OLD_LOCATION.value = oldValue;
-});
-
-const NEW_LOCATION_CENTER: YMapLocationRequest = {
-    center: [2.294587, 48.859958], // [lng, lat]
-    zoom: 16.6,
+    // If the automatic rotation mode is stopped then cancel the request for the next animation frame
+    }
+    else if (frame.value) cancelAnimationFrame(frame.value);
 };
 
-const NEW_LOCATION_BOUNDS: YMapLocationRequest = {
-    bounds: [
-        [-74.045667, 40.690044], // bounds - the boundaries of the visible area of the map
-        [-74.043567, 40.688628], // [[lng, lat], [lng, lat]].
-    ],
-    zoom: 16.6,
+watch([hasAutoRotate, map], () => {
+    if (typeof requestAnimationFrame === 'undefined') return;
+    requestAnimationFrame(startAutoRotationCamera);
+}, {
+    immediate: true,
+});
+
+onBeforeUnmount(() => {
+    if (frame.value) {
+        hasAutoRotate.value = false;
+        cancelAnimationFrame(frame.value);
+    }
+});
+
+const updateCamera = async (type: 'azimuth' | 'tilt', direction: 'minus' | 'plus') => {
+    hasAutoRotate.value = false;
+    await nextTick();
+    if (frame.value) cancelAnimationFrame(frame.value);
+
+    mapAzimuth.value = map.value!.azimuth;
+    mapTilt.value = map.value!.tilt;
+
+    switch (type) {
+        case 'azimuth':
+            mapAzimuth.value = map.value!.azimuth + ((30 * Math.PI) / (180 * (direction === 'minus' ? -1 : 1)));
+            break;
+        case 'tilt':
+            mapTilt.value = map.value!.tilt + ((10 * Math.PI) / (180 * (direction === 'minus' ? -1 : 1)));
+            break;
+        default:
+    }
 };
-
-function getCurrentLocation(): Promise<{ latitude: number; longitude: number }> {
-    return new Promise((resolve, reject) => {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
-                    resolve({ latitude, longitude });
-                },
-                (error) => {
-                    reject(`Ошибка получения местоположения: ${error.message}`);
-                }
-            );
-        } else {
-            reject("Геолокация не поддерживается вашим браузером.");
-        }
-    });
-}
-
 </script>
