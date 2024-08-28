@@ -77,11 +77,11 @@ const camera = ref<YMapCameraRequest>({
 });
 
 const LOCATION = ref<YMapLocationRequest>({
-    center: [pos.latitude, pos.longitude], // starting position [lng, lat]
+    center: [0, 0], // starting position [lng, lat]
     zoom: 5, // starting zoom
 });
 
-console.log(LOCATION);
+
 
 // eslint-disable-next-line vue/no-ref-object-reactivity-loss
 const OLD_LOCATION = ref<YMapLocationRequest>(LOCATION.value);
@@ -91,7 +91,7 @@ watch(LOCATION, (_, oldValue) => {
 });
 
 const NEW_LOCATION_CENTER: YMapLocationRequest = {
-    center: [2.294587, 48.859958], // [lng, lat]
+    center: [pos.latitude, pos.longitude], // [lng, lat]
     zoom: 16.6,
 };
 
