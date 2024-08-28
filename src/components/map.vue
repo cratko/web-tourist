@@ -67,7 +67,7 @@ function getCurrentLocation(): Promise<{ latitude: number; longitude: number }> 
 let pos = await getCurrentLocation();
 
 const LOCATION = ref<YMapLocationRequest>({
-            center: [pos.latitude, pos.longitude], // starting position [lng, lat]
+            center: [0, 0], // starting position [lng, lat]
             zoom: 5, // starting zoom
 });
 
