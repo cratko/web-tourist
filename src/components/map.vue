@@ -91,7 +91,7 @@ watch(LOCATION, (_, oldValue) => {
 });
 
 const NEW_LOCATION_CENTER: YMapLocationRequest = {
-    center: [53, 55], // [lng, lat]
+    center: [37.623082, 55.75254], // [lng, lat]
     zoom: 16.6,
 };
 
