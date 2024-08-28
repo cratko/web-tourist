@@ -3,7 +3,7 @@
         v-model="map"
         :settings="{
           location: {
-            center: [37.617644, 55.755819],
+            center: [currentLocation.coords.latitude, currentLocation.coords.longitude],
             zoom: 9,
           },
         }"
@@ -12,13 +12,35 @@
     >
       <yandex-map-default-scheme-layer/>
     </yandex-map>
+    <button @click="locateMe">Get location</button>
 </template>
   
 <script setup lang="ts">
-import { shallowRef } from 'vue';
+import { shallowRef, ref } from 'vue';
 import type { YMap } from '@yandex/ymaps3-types';
 import { YandexMap, YandexMapDefaultSchemeLayer } from 'vue-yandex-maps';
 
 //Можно использовать для различных преобразований
 const map = shallowRef<null | YMap>(null);
+const currentLocation = ref([]);
+
+const getCurrentLocation = async() => {
+    return new Promise((resolve, reject) => {
+
+    if(!("geolocation" in navigator)) {
+    reject(new Error('Geolocation is not available.'));
+    }
+
+    navigator.geolocation.getCurrentPosition(pos => {
+    resolve(pos);
+    }, err => {
+    reject(err);
+    });
+
+    });
+}
+
+const locateMe = async() => {
+    currentLocation.value = getCurrentLocation();
+}
 </script>
