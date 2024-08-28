@@ -20,6 +20,8 @@ import { shallowRef, ref } from 'vue';
 import type { YMap } from '@yandex/ymaps3-types';
 import { YandexMap, YandexMapDefaultSchemeLayer } from 'vue-yandex-maps';
 
+getCurrentLocation();
+
 //Можно использовать для различных преобразований
 const map = shallowRef<null | YMap>(null);
 const currentLocation = ref([]);
