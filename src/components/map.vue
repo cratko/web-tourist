@@ -2,71 +2,84 @@
     <div class="center-preloader">
         <f7-preloader color="orange" />
     </div>
-    <yandex-map
-        v-if="currentLocation.coords"
-        v-model="map"
-        :settings="{
-          location: {
-            center: [currentLocation.coords.latitude, 
-                        currentLocation.coords.longitude],
-            zoom: 9,
-          },
-        }"
-        width="100%"
-        height="100%"
-    >
-      <yandex-map-default-scheme-layer/>
-    </yandex-map>
-    <f7-button v-if="currentLocation.coords" @click="locateMe">Get location</f7-button>
+    <div class="tabs">
+    <div class="tabs_header">
+        <div
+            class="tabs_header_tab"
+            :class="{ 'tabs_header_tab--active': tab === 'description' }"
+            @click="tab = 'description'"
+        >
+            Описание
+        </div>
+        <div
+            class="tabs_header_tab"
+            :class="{ 'tabs_header_tab--active': tab === 'map' }"
+            @click="tab = 'map'"
+        >
+            Карта
+        </div>
+    </div>
+    <div class="tabs_content">
+        <div
+            v-if="tab === 'description'"
+            class="tabs_content_description"
+        >
+            Скрипты Яндекса подгрузятся, когда вы переключите вкладки сверху - и не секундой раньше!
+        </div>
+        <yandex-map
+            v-else-if="tab === 'map'"
+            :height="height"
+            :settings="{
+                location: {
+                    center,
+                    zoom,
+                },
+                theme,
+                showScaleInCopyrights: true,
+            }"
+            :width="width"
+        >
+            <yandex-map-default-scheme-layer/>
+            <yandex-map-default-features-layer/>
+
+            <yandex-map-controls :settings="{ position: 'top right' }">
+                <yandex-map-control-button :settings="{ onClick: () => showMarker1 = !showMarker1 }">
+                    Показать маркер 1
+                </yandex-map-control-button>
+                <yandex-map-control-button :settings="{ onClick: () => showMarker2 = !showMarker2 }">
+                    Показать маркер 2
+                </yandex-map-control-button>
+            </yandex-map-controls>
+
+            <yandex-map-marker
+                v-if="showMarker1"
+                :settings="{ coordinates: [center[0] + 0.1, center[1] + 0.1]}"
+            >
+                Маркер 1
+            </yandex-map-marker>
+            <yandex-map-marker
+                v-if="showMarker2"
+                :settings="{ coordinates: center }"
+            >
+                Маркер 2
+            </yandex-map-marker>
+        </yandex-map>
+    </div>
+</div>
 </template>
-  
-<script lang="ts">
-import { shallowRef, ref } from 'vue';
-import type { YMap } from '@yandex/ymaps3-types';
-import { YandexMap, YandexMapDefaultSchemeLayer } from 'vue-yandex-maps';
 
-export default {
-    setup() {
-        const map = shallowRef<null | YMap>(null);
-        const currentLocation = ref(false);
+<script setup>
+import {
+    YandexMap,
+    YandexMapControlButton,
+    YandexMapControls,
+    YandexMapDefaultFeaturesLayer,
+    YandexMapDefaultSchemeLayer,
+    YandexMapMarker,
+} from 'vue-yandex-maps';
+import { ref } from 'vue';
 
-        return {map, currentLocation}
-
-    },
-    created() {
-    //do we support geolocation
-    if(!("geolocation" in navigator)) {
-      console.log('Geolocation is not available.');
-      return;
-    }
-
-    // get position
-    navigator.geolocation.getCurrentPosition(pos => {
-      this.currentLocation = pos;
-      console.log(this.currentLocation)
-
-    }, err => {
-      console.log(err.message);
-    })
-    },
-    methods: {
-        locateMe() {
-            if(!("geolocation" in navigator)) {
-            console.log('Geolocation is not available.');
-            return;
-            }
-
-            // get position
-            navigator.geolocation.getCurrentPosition(pos => {
-            this.currentLocation = pos;
-            console.log(this.currentLocation.coords)
-
-            }, err => {
-            console.log(err.message);
-            })
-        }
-    }
-}
-
-
+const tab = ref('description');
+const showMarker1 = ref(false);
+const showMarker2 = ref(false);
 </script>
