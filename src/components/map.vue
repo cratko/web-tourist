@@ -43,6 +43,7 @@ export default {
     // get position
     navigator.geolocation.getCurrentPosition(pos => {
       this.currentLocation = pos;
+      console.log(this.currentLocation)
 
     }, err => {
       console.log(err.message);
