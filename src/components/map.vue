@@ -50,14 +50,38 @@ import type { YMapLocationRequest } from '@yandex/ymaps3-types/imperative/YMap';
 const map = shallowRef<YMap | null>(null);
 const locationChanged = ref(false);
 
+function getCurrentLocation(): Promise<{ latitude: number; longitude: number }> {
+    return new Promise((resolve, reject) => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    resolve({ latitude, longitude });
+                },
+                (error) => {
+                    reject(`Ошибка получения местоположения: ${error.message}`);
+                }
+            );
+        } else {
+            reject("Геолокация не поддерживается вашим браузером.");
+        }
+    });
+}
+
+let pos = await getCurrentLocation();
+console.log(pos);
+
 const camera = ref<YMapCameraRequest>({
     duration: 2500,
 });
 
 const LOCATION = ref<YMapLocationRequest>({
-    center: [37.623082, 55.75254], // starting position [lng, lat]
+    center: [pos.latitude, pos.longitude], // starting position [lng, lat]
     zoom: 5, // starting zoom
 });
+
+console.log(LOCATION);
 
 // eslint-disable-next-line vue/no-ref-object-reactivity-loss
 const OLD_LOCATION = ref<YMapLocationRequest>(LOCATION.value);
