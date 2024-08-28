@@ -1,0 +1,18 @@
+{
+  "cwd": "D:\\KalugaFSP\\web-tourist",
+  "type": [
+    "pwa"
+  ],
+  "name": "WebTourist",
+  "framework": "vue",
+  "template": "blank",
+  "bundler": "vite",
+  "cssPreProcessor": false,
+  "theming": {
+    "customColor": true,
+    "color": "#f3fb05",
+    "darkMode": false,
+    "iconFonts": false
+  },
+  "customBuild": false
+}
