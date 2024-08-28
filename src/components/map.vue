@@ -1,17 +1,14 @@
 <template>
 <yandex-map
     v-model="map"
-    :height="height"
     :settings="{
         location: {
             center: [37.537, 55.749],
             zoom: 17,
         },
         camera: { azimuth: mapAzimuth, tilt: mapTilt, duration: hasAutoRotate ? 0 : 250 },
-        theme,
         showScaleInCopyrights: true,
     }"
-    :width="width"
 >
     <yandex-map-default-scheme-layer/>
     <yandex-map-default-features-layer/>
@@ -77,7 +74,7 @@ import {
     YandexMapDefaultFeaturesLayer,
     YandexMapDefaultMarker,
 } from 'vue-yandex-maps';
-import { nextTick, onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch, onActivated } from 'vue';
 import type { YMap } from '@yandex/ymaps3-types';
 
 const hasAutoRotate = ref(true);
@@ -113,7 +110,13 @@ onBeforeUnmount(() => {
         hasAutoRotate.value = false;
         cancelAnimationFrame(frame.value);
     }
+    
 });
+
+
+onActivated(() => {
+console.log(document.getElementsByClassName('ymaps3x0--geolocation-control'));
+})
 
 const updateCamera = async (type: 'azimuth' | 'tilt', direction: 'minus' | 'plus') => {
     hasAutoRotate.value = false;
@@ -133,4 +136,5 @@ const updateCamera = async (type: 'azimuth' | 'tilt', direction: 'minus' | 'plus
         default:
     }
 };
+
 </script>

@@ -1,5 +1,8 @@
 # WebTourist
 
+## Версия 0.0.1beta
+- Базовый UI с картой текущего местоположения и тестовой меткой
+
 ## Framework7 CLI Options
 
 Framework7 app created with following options:
