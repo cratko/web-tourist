@@ -7,3 +7,11 @@
 .main-block {
     height: 85vh;
 }
+
+.center-preloader {
+    width: 100%;
+    height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
