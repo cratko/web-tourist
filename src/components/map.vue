@@ -1,7 +1,5 @@
 <template>
-<!-- Параметр real-settings-location в примере вызывает изменение геопозиции на каждое изменение settings. -->
-<!-- Ознакомьтесь с документацией компонента YandexMap, чтобы узнать больше, зачем он нужен и какие подводные камни -->
-<yandex-map
+    <yandex-map
     v-model="map"
     :height="height"
     real-settings-location
@@ -23,22 +21,13 @@
             <yandex-map-control-button
                 :settings="{ onClick: () => [LOCATION = NEW_LOCATION_CENTER, camera.tilt = (45 * Math.PI) / 180, locationChanged = true]}"
             >
-                Изменить Center
-            </yandex-map-control-button>
-            <yandex-map-control-button
-                :settings="{ onClick: () => [LOCATION = NEW_LOCATION_BOUNDS, camera.tilt = (45 * Math.PI) / 180, locationChanged = true]}"
-            >
-                Изменить Bounds
+                Текущее местоположение
             </yandex-map-control-button>
         </template>
-        <yandex-map-control-button
-            v-else
-            :settings="{ onClick: () => [LOCATION = OLD_LOCATION, camera.tilt = 0, locationChanged = false]}"
-        >
-            Вернуться назад
-        </yandex-map-control-button>
     </yandex-map-controls>
+
 </yandex-map>
+
 </template>
 
 <script setup lang="ts">
@@ -78,5 +67,4 @@ const NEW_LOCATION_BOUNDS: YMapLocationRequest = {
     ],
     zoom: 16.6,
 };
-
 </script>
