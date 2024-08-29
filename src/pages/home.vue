@@ -20,7 +20,7 @@ function getLocationFromUser (){
   }
 
 var currentLocation = ref(await getLocationFromUser());
-fetch('http://hackathon-koespe-db6f73-1b4fd0-185-174-136-205.traefik.me/places', { 
+fetch('https://hack-koespe.bgitu-compass.ru/places', { 
     method: "POST",
     headers: { 'Content-type': 'application/json; charset=UTF-8'},
     body: JSON.stringify({
@@ -38,7 +38,7 @@ fetch('http://hackathon-koespe-db6f73-1b4fd0-185-174-136-205.traefik.me/places',
 
 watch(radius, async (newQuestion, oldQuestion) => {
   if (radius.value != "") {
-      fetch('http://hackathon-koespe-db6f73-1b4fd0-185-174-136-205.traefik.me/places', { 
+      fetch('https://hack-koespe.bgitu-compass.ru/places', { 
     method: "POST",
     headers: { 'Content-type': 'application/json; charset=UTF-8'},
     body: JSON.stringify({
@@ -59,7 +59,7 @@ const openedPlace = ref();
 const popupOpened = ref();
 
 const produceAnAlert = (placeId) => {
-    fetch('http://hackathon-koespe-db6f73-1b4fd0-185-174-136-205.traefik.me/places/'+placeId, { 
+    fetch('https://hack-koespe.bgitu-compass.ru/places/'+placeId, { 
     method: "GET",
     headers: { 'Content-type': 'application/json; charset=UTF-8'},
     })

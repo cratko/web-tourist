@@ -199,7 +199,7 @@ const updateCamera = async (type: 'azimuth' | 'tilt', direction: 'minus' | 'plus
 const openedPlace = ref();
 
 const produceAnAlert = (placeId) => {
-    fetch('http://hackathon-koespe-db6f73-1b4fd0-185-174-136-205.traefik.me/places/'+placeId, { 
+    fetch('https://hack-koespe.bgitu-compass.ru/places/'+placeId, { 
     method: "GET",
     headers: { 'Content-type': 'application/json; charset=UTF-8'},
     })
