@@ -24,10 +24,6 @@
           primary: '#f3fb05',
         },
 
-
-
-        // App store
-        store: store,
         // App routes
         routes: routes,
 
