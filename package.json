@@ -23,6 +23,7 @@
     "skeleton-elements": "^4.0.1",
     "swiper": "^11.1.10",
     "vue": "^3.4.38",
+    "vue-3d-model": "^1.4.1",
     "vue-yandex-maps": "^2.1.4"
   },
   "devDependencies": {

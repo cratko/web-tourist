@@ -11,7 +11,8 @@ export default async () => {
   return  {
     plugins: [
       vue({script: {
-        defineModel: true
+        defineModel: true,
+        propsDestructure: true
       }, 
       template: { compilerOptions: { isCustomElement: (tag) => tag.includes('swiper-') } } }),,
 
