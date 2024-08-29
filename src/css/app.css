@@ -15,3 +15,12 @@
     justify-content: center;
     align-items: center;
 }
+
+.tab-active {
+    padding: 0px !important;
+}
+
+.places-block {
+    max-height: 55vh !important;
+    padding: 0px !important;
+}

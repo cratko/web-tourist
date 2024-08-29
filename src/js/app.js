@@ -16,8 +16,10 @@ import 'framework7/css/bundle';
 import '../css/app.css';
 import '../css/framework7-icons.css';
 
+
 // Import App Component
 import App from '../components/app.vue';
+import getLocationFromUser from './geolocation';
 
 // Init Framework7-Vue Plugin
 Framework7.use(Framework7Vue);
