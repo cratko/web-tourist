@@ -12,7 +12,6 @@
 
 
   import routes from '../js/routes.js';
-  import store from '../js/store';
 
   export default {
     setup() {

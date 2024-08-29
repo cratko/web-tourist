@@ -21,6 +21,7 @@ export default async () => {
     publicDir: PUBLIC_DIR,
     build: {
       outDir: BUILD_DIR,
+      target: 'esnext',
       assetsInlineLimit: 0,
       emptyOutDir: true,
       rollupOptions: {
