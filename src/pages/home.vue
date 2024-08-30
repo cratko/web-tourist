@@ -4,7 +4,7 @@ import Map from '../components/map.vue';
 import Model from '../components/model.vue';
 import Routes from '../components/routes.vue';
 import Tasks from '../components/tasks.vue';
-
+import { useCookies } from "vue3-cookies";
 import {ref, watch} from 'vue';
 
 const radius = ref(50);
@@ -14,6 +14,7 @@ const selectedTags = ref([]);
 const tags = ref();
 const trueIndices = ref([]);
 const popupPayment = ref(false);
+const { cookies } = useCookies();
 
 function getLocationFromUser (){
     return new Promise((resolve, reject) => {
@@ -127,16 +128,6 @@ fetch('https://hack-koespe.bgitu-compass.ru/profile?access_token='+cookies.get("
     .then((response) => response.json())
     .then((json) => {
         user.value = json;
-        console.log(json)
-        fetch('https://hack-vika.bgitu-compass.ru/applications_of_guide/'+user.value.id, { 
-        method: "GET",
-        headers: { 'Content-type': 'application/json; charset=UTF-8'},
-        })
-        .then((response) => response.json())
-        .then((json) => {
-            tours.value = json;
-            console.log(json);
-        });
     });
 
 
@@ -163,6 +154,7 @@ const paymentData = ref();
 function openPaymentPopup(guideId, placeId, userId) {
   popupPayment.value = true;
   paymentData.value = {guideId: guideId, placeId: placeId, userId: userId}
+  console.log(paymentData.value);
 };
 
 
@@ -274,7 +266,7 @@ export default {
               <f7-list-item
         link="#"
         v-for="guide in openedPlace.guides"
-        @click="openPaymentPopup()"
+        @click="openPaymentPopup(guide.id, openedPlace.id, user.id)"
         :title="guide.fullname"
         :subtitle="guide.phone_number"
         :text="guide.description"
