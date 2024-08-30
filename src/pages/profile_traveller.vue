@@ -126,7 +126,7 @@ fetch('https://hack-koespe.bgitu-compass.ru/profile?access_token='+cookies.get("
     .then((json) => {
         user.value = json;
         console.log(json)
-        fetch('https://hack-vika.bgitu-compass.ru/applications_of_guide/'+user.value.id, { 
+        fetch('https://hack-vika.bgitu-compass.ru/applications_of_user/'+user.value.id, { 
         method: "GET",
         headers: { 'Content-type': 'application/json; charset=UTF-8'},
         })

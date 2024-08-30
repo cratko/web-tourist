@@ -6,6 +6,7 @@ import Routes from '../components/routes.vue';
 import Tasks from '../components/tasks.vue';
 import { useCookies } from "vue3-cookies";
 import {ref, watch} from 'vue';
+import { f7 } from 'framework7-vue';
 
 const radius = ref(50);
 
@@ -128,6 +129,7 @@ fetch('https://hack-koespe.bgitu-compass.ru/profile?access_token='+cookies.get("
     .then((response) => response.json())
     .then((json) => {
         user.value = json;
+        console.log(user.value)
     });
 
 
@@ -149,12 +151,27 @@ const getTagName = (tagId) => {
     }
 
 };
+const buttonPaymentUrl = ref('');
 
-const paymentData = ref();
-function openPaymentPopup(guideId, placeId, userId) {
+function openPaymentPopup(guideId, placeId) {
   popupPayment.value = true;
-  paymentData.value = {guideId: guideId, placeId: placeId, userId: userId}
-  console.log(paymentData.value);
+  let paymentData = {guide_id: guideId, place_id: placeId, user_id: user.value.id,
+    amount: 500
+  }
+
+
+  fetch('https://hack-koespe.bgitu-compass.ru/payments/create', { 
+    method: "POST",
+    headers: { 'Content-type': 'application/json; charset=UTF-8'},
+    body: JSON.stringify(
+      paymentData
+    ),
+    })
+    .then((response) => response.json())
+    .then((json) => {
+        buttonPaymentUrl.value = json.payment_url;
+        f7.view.main.router.navigate(buttonPaymentUrl.value);
+    });
 };
 
 
@@ -172,7 +189,7 @@ export default {
   },
   data() {
     return {radius, places, popupOpened, openedPlace, produceAnAlert, tags, 
-      selectedTags, getTagName, popupPayment, openPaymentPopup}
+      selectedTags, getTagName, popupPayment, openPaymentPopup, buttonPaymentUrl}
   }
 }
 </script>
@@ -187,9 +204,9 @@ export default {
                 multiply</i></f7-link>
             </f7-nav-right>
           </f7-navbar>
-          <f7-block strong inset>
+          <f7-block strong inset v-model="buttonPaymentUrl">
           
-            <f7-button tonal round style='margin-bottom: 20px'>Оплатить (500 руб)</f7-button>
+            <f7-button :href="buttonPaymentUrl" external>Оплатить (500 руб)</f7-button>
             <f7-button tonal round>Списать бонусы</f7-button>
     </f7-block>
       </f7-page>
@@ -266,7 +283,7 @@ export default {
               <f7-list-item
         link="#"
         v-for="guide in openedPlace.guides"
-        @click="openPaymentPopup(guide.id, openedPlace.id, user.id)"
+        @click="openPaymentPopup(guide.id, openedPlace.id)"
         :title="guide.fullname"
         :subtitle="guide.phone_number"
         :text="guide.description"
