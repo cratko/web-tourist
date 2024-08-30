@@ -13,6 +13,7 @@ let places = ref([]);
 const selectedTags = ref([]);
 const tags = ref();
 const trueIndices = ref([]);
+const popupPayment = ref(false);
 
 function getLocationFromUser (){
     return new Promise((resolve, reject) => {
@@ -116,10 +117,27 @@ watch(radius, async (newQuestion, oldQuestion) => {
 
 const openedPlace = ref();
 const popupOpened = ref();
+const user = ref()
 
 
-
-
+fetch('https://hack-koespe.bgitu-compass.ru/profile?access_token='+cookies.get("access_token"), { 
+    method: "GET",
+    headers: { 'Content-type': 'application/json; charset=UTF-8'},
+    })
+    .then((response) => response.json())
+    .then((json) => {
+        user.value = json;
+        console.log(json)
+        fetch('https://hack-vika.bgitu-compass.ru/applications_of_guide/'+user.value.id, { 
+        method: "GET",
+        headers: { 'Content-type': 'application/json; charset=UTF-8'},
+        })
+        .then((response) => response.json())
+        .then((json) => {
+            tours.value = json;
+            console.log(json);
+        });
+    });
 
 
 const produceAnAlert = (placeId) => {
@@ -141,6 +159,12 @@ const getTagName = (tagId) => {
 
 };
 
+const paymentData = ref();
+function openPaymentPopup(guideId, placeId, userId) {
+  popupPayment.value = true;
+  paymentData.value = {guideId: guideId, placeId: placeId, userId: userId}
+};
+
 
 
 export default {
@@ -155,12 +179,30 @@ export default {
     
   },
   data() {
-    return {radius, places, popupOpened, openedPlace, produceAnAlert, tags, selectedTags, getTagName}
+    return {radius, places, popupOpened, openedPlace, produceAnAlert, tags, 
+      selectedTags, getTagName, popupPayment, openPaymentPopup}
   }
 }
 </script>
 
 <template>
+  <!-- Payment Popup -->
+    <f7-popup v-model:opened="popupPayment" class="popup-payment" style="height: 35%" >
+        <f7-page>
+          <f7-navbar title="Оплата гида">
+            <f7-nav-right>
+              <f7-link popup-close><i class="f7-icons">
+                multiply</i></f7-link>
+            </f7-nav-right>
+          </f7-navbar>
+          <f7-block strong inset>
+          
+            <f7-button tonal round style='margin-bottom: 20px'>Оплатить (500 руб)</f7-button>
+            <f7-button tonal round>Списать бонусы</f7-button>
+    </f7-block>
+      </f7-page>
+      </f7-popup>
+
   <f7-popup v-model:opened="popupOpened" class="demo-popup" v-if="openedPlace" tablet-fullscreen="true">
       <f7-page>
         <f7-navbar :title="openedPlace.title">
@@ -232,6 +274,7 @@ export default {
               <f7-list-item
         link="#"
         v-for="guide in openedPlace.guides"
+        @click="openPaymentPopup()"
         :title="guide.fullname"
         :subtitle="guide.phone_number"
         :text="guide.description"
@@ -364,4 +407,5 @@ export default {
     
 
   </f7-page>
+
 </template>
