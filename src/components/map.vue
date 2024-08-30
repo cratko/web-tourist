@@ -5,7 +5,7 @@
     real-settings-location
     :settings="{
         location: {
-            center: [36.2690733, 54.5106522],
+            center: [36.27309, 54.512538],
             zoom: 17,
         },
         camera: { azimuth: mapAzimuth, tilt: mapTilt, duration: hasAutoRotate ? 0 : 250 },
@@ -68,44 +68,91 @@
                 multiply</i></f7-link>
           </f7-nav-right>
         </f7-navbar>
+
         <f7-block>
+          <div class="grid grid-cols-2 grid-gap">
             <f7-block strong inset>
                 <swiper-container :pagination="true" class="demo-swiper-multiple" :space-between="50">
-                    <swiper-slide v-for="imgUrl in openedPlace.photos_url"><img :src="imgUrl"/></swiper-slide>
+                    <swiper-slide v-for="imgUrl in openedPlace.photos_url" class="img-swiper"><img class='img-swiper-img' :src="imgUrl"/></swiper-slide>
                 </swiper-container>
             </f7-block>
 
-        <f7-block strong inset>
+            <f7-block strong inset v-if="openedPlace.stl_url">
+                <Model v-model:stl_url="openedPlace.stl_url"></Model>
+            </f7-block>
+          </div>
+
+
+          <div class="grid grid-cols-2 grid-gap">
+        <f7-block strong inset class="places-box">
             <f7-block-title>
               Описание
             </f7-block-title>
             <p>{{ openedPlace.description }}</p>
             </f7-block>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse faucibus mauris
-            leo, eu bibendum neque congue non. Ut leo mauris, eleifend eu commodo a, egestas ac
-            urna. Maecenas in lacus faucibus, viverra ipsum pulvinar, molestie arcu. Etiam lacinia
-            venenatis dignissim. Suspendisse non nisl semper tellus malesuada suscipit eu et eros.
-            Nulla eu enim quis quam elementum vulputate. Mauris ornare consequat nunc viverra
-            pellentesque. Aenean semper eu massa sit amet aliquam. Integer et neque sed libero
-            mollis elementum at vitae ligula. Vestibulum pharetra sed libero sed porttitor.
-            Suspendisse a faucibus lectus.
-          </p>
-          <p>
-            Duis ut mauris sollicitudin, venenatis nisi sed, luctus ligula. Phasellus blandit nisl
-            ut lorem semper pharetra. Nullam tortor nibh, suscipit in consequat vel, feugiat sed
-            quam. Nam risus libero, auctor vel tristique ac, malesuada ut ante. Sed molestie, est in
-            eleifend sagittis, leo tortor ullamcorper erat, at vulputate eros sapien nec libero.
-            Mauris dapibus laoreet nibh quis bibendum. Fusce dolor sem, suscipit in iaculis id,
-            pharetra at urna. Pellentesque tempor congue massa quis faucibus. Vestibulum nunc eros,
-            convallis blandit dui sit amet, gravida adipiscing libero.
-          </p>
+
+            <f7-block strong inset >
+              <f7-block-title>
+              Отзывы
+            </f7-block-title>
+            <f7-list media-list dividers-ios strong-ios outline-ios>
+              <f7-list-item class="rating-list"
+        link="#"
+        v-for="review in openedPlace.reviews"
+        :title="review.user_name"
+        :subtitle="review.date"
+        :text="review.review"
+        :badge="review.rating"
+        badge-color="yellow"
+      >
+      
+        <template #media>
+          <img
+            style="border-radius: 8px"
+            src="https://i.pinimg.com/originals/1f/28/c6/1f28c68d2c35f389966b5a363b992d06.png"
+            width="80"
+          />
+        </template>
+      </f7-list-item>
+            </f7-list>
+
+            </f7-block>
+
+            </div>
+
+            <f7-block strong inset >
+              <f7-block-title>
+              Актуальные гиды
+            </f7-block-title>
+            <f7-list media-list dividers-ios strong-ios outline-ios>
+              <f7-list-item
+        link="#"
+        v-for="guide in openedPlace.guides"
+        :title="guide.fullname"
+        :subtitle="guide.phone_number"
+        :text="guide.description"
+        badge="4.9 ★"
+      >
+        <template #media>
+          <img
+            style="border-radius: 8px"
+            src="https://i.pinimg.com/originals/1f/28/c6/1f28c68d2c35f389966b5a363b992d06.png"
+            width="80"
+          />
+        </template>
+      </f7-list-item>
+            </f7-list>
+
+            </f7-block>
+
         </f7-block>
+
       </f7-page>
     </f7-popup>
 </template>
 
 <script setup lang="ts">
+
 import {
     YandexMap,
     YandexMapControlButton,
@@ -121,7 +168,7 @@ import {
 import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch, onActivated, triggerRef } from 'vue';
 import type { YMap } from '@yandex/ymaps3-types';
 import type { LngLat } from '@yandex/ymaps3-types';
-
+import Model from '../components/model.vue';
 
 const hasAutoRotate = ref(true);
 const mapAzimuth = ref(0);

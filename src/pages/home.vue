@@ -7,6 +7,9 @@ import {ref, watch} from 'vue';
 const radius = ref(50);
 
 let places = ref([]);
+const selectedTags = ref([]);
+const tags = ref();
+const trueIndices = ref([]);
 
 function getLocationFromUser (){
     return new Promise((resolve, reject) => {
@@ -18,7 +21,40 @@ function getLocationFromUser (){
         reject('Geolocation not supported');
       }
     });
+
   }
+  fetch('https://hack-koespe.bgitu-compass.ru/tags/', { 
+    method: "GET",
+    headers: { 'Content-type': 'application/json; charset=UTF-8'},
+    })
+    .then((response) => response.json())
+    .then((json) => {
+        tags.value = json;
+        tags.value.sort(function(a, b) {
+            return parseFloat(a.id) - parseFloat(b.id);
+        });
+    });
+
+watch(selectedTags.value, async() => {
+  console.log('detected');
+  trueIndices.value = selectedTags.value.map((value, index) => value ? index : null)
+  .filter(index => index !== null);
+
+  fetch('https://hack-koespe.bgitu-compass.ru/places', { 
+    method: "POST",
+    headers: { 'Content-type': 'application/json; charset=UTF-8'},
+    body: JSON.stringify({
+        current_lat: currentLocation.value.latitude,
+        current_lon: currentLocation.value.longitude,
+        radius_km: 50,
+        tags: trueIndices.value
+    }),
+    })
+    .then((response) => response.json())
+    .then((json) => {
+        places.value = json;
+    });
+})
 
 var currentLocation = ref(await getLocationFromUser());
 fetch('https://hack-koespe.bgitu-compass.ru/places', { 
@@ -28,7 +64,7 @@ fetch('https://hack-koespe.bgitu-compass.ru/places', {
         current_lat: currentLocation.value.latitude,
         current_lon: currentLocation.value.longitude,
         radius_km: 50,
-        tags: []
+        tags: trueIndices.value
     }),
     })
     .then((response) => response.json())
@@ -46,7 +82,26 @@ watch(radius, async (newQuestion, oldQuestion) => {
         current_lat: currentLocation.value.latitude,
         current_lon: currentLocation.value.longitude,
         radius_km: radius.value,
-        tags: []
+        tags: trueIndices.value
+    }),
+    })
+    .then((response) => response.json())
+    .then((json) => {
+        places.value = json;
+    });
+  }
+})
+
+watch(radius, async (newQuestion, oldQuestion) => {
+  if (radius.value != "") {
+      fetch('https://hack-koespe.bgitu-compass.ru/places', { 
+    method: "POST",
+    headers: { 'Content-type': 'application/json; charset=UTF-8'},
+    body: JSON.stringify({
+        current_lat: currentLocation.value.latitude,
+        current_lon: currentLocation.value.longitude,
+        radius_km: radius.value,
+        tags: trueIndices.value
     }),
     })
     .then((response) => response.json())
@@ -58,17 +113,11 @@ watch(radius, async (newQuestion, oldQuestion) => {
 
 const openedPlace = ref();
 const popupOpened = ref();
-const tags = ref([]);
 
-fetch('https://hack-koespe.bgitu-compass.ru/tags/', { 
-    method: "GET",
-    headers: { 'Content-type': 'application/json; charset=UTF-8'},
-    })
-    .then((response) => response.json())
-    .then((json) => {
-        tags.value = json;
-    });
-    tags.value = true;
+
+
+
+
 
 const produceAnAlert = (placeId) => {
     fetch('https://hack-koespe.bgitu-compass.ru/places/'+placeId, { 
@@ -82,6 +131,14 @@ const produceAnAlert = (placeId) => {
     popupOpened.value = true;
 };
 
+const getTagName = (tagId) => {
+    if (tags.value) {
+      return tags.value[tagId-1].name;
+    }
+
+};
+
+
 
 export default {
   components: {
@@ -89,8 +146,11 @@ export default {
     Map,
     Model
   },
+  methods: {
+    
+  },
   data() {
-    return {radius, places, popupOpened, openedPlace, produceAnAlert, tags}
+    return {radius, places, popupOpened, openedPlace, produceAnAlert, tags, selectedTags, getTagName}
   }
 }
 </script>
@@ -118,11 +178,67 @@ export default {
             </f7-block>
           </div>
 
+
+          <div class="grid grid-cols-2 grid-gap">
         <f7-block strong inset class="places-box">
             <f7-block-title>
               Описание
             </f7-block-title>
             <p>{{ openedPlace.description }}</p>
+            </f7-block>
+
+            <f7-block strong inset >
+              <f7-block-title>
+              Отзывы
+            </f7-block-title>
+            <f7-list media-list dividers-ios strong-ios outline-ios>
+              <f7-list-item class="rating-list"
+        link="#"
+        v-for="review in openedPlace.reviews"
+        :title="review.user_name"
+        :subtitle="review.date"
+        :text="review.review"
+        :badge="review.rating"
+        badge-color="yellow"
+      >
+      
+        <template #media>
+          <img
+            style="border-radius: 8px"
+            src="https://i.pinimg.com/originals/1f/28/c6/1f28c68d2c35f389966b5a363b992d06.png"
+            width="80"
+          />
+        </template>
+      </f7-list-item>
+            </f7-list>
+
+            </f7-block>
+
+            </div>
+
+            <f7-block strong inset >
+              <f7-block-title>
+              Актуальные гиды
+            </f7-block-title>
+            <f7-list media-list dividers-ios strong-ios outline-ios>
+              <f7-list-item
+        link="#"
+        v-for="guide in openedPlace.guides"
+        :title="guide.fullname"
+        :subtitle="guide.phone_number"
+        :text="guide.description"
+        badge="4.9 ★"
+      >
+        <template #media>
+          <img
+            style="border-radius: 8px"
+            src="https://i.pinimg.com/originals/1f/28/c6/1f28c68d2c35f389966b5a363b992d06.png"
+            width="80"
+          />
+        </template>
+      </f7-list-item>
+            </f7-list>
+
             </f7-block>
 
         </f7-block>
@@ -167,9 +283,9 @@ export default {
         link="#"
         @click="produceAnAlert(place.id)"
         :title="place.title"
-        :subtitle="place.description"
         :text="place.description"
       >
+      <div class="item-subtitle"><span class='span-tag' v-for='tagId in place.tags'>{{ getTagName(tagId) }}</span></div>
         <template #media>
           <img
             style="border-radius: 8px"
@@ -208,7 +324,7 @@ export default {
 
         <f7-block strong inset>
           <f7-block-title>
-            Радиус отображения объектов: {{ radius }}
+            Радиус отображения объектов:
             </f7-block-title>
                     <f7-input
     type="text"
@@ -222,7 +338,7 @@ export default {
   <f7-list simple-list strong outline-ios dividers-ios>
       <f7-list-item v-for='tag in tags'>
         <span>{{tag.name}}</span>
-        <f7-toggle></f7-toggle>
+        <f7-toggle v-model:checked='selectedTags[tag.id]'></f7-toggle>
       </f7-list-item>
     </f7-list>
 

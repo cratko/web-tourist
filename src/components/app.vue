@@ -1,8 +1,8 @@
 <template>
   <f7-app v-bind="f7params">
-
+    
   <!-- Your main view, should have "view-main" class -->
-  <f7-view main class="safe-areas" url="/"></f7-view>
+  <f7-view main class="view-main" url="/"></f7-view>
 
   </f7-app>
 </template>

@@ -24,7 +24,9 @@
     "swiper": "^11.1.10",
     "vue": "^3.4.38",
     "vue-3d-model": "^1.4.1",
-    "vue-yandex-maps": "^2.1.4"
+    "vue-yandex-maps": "^2.1.4",
+    "vue3-charts": "^1.1.33",
+    "vue3-cookies": "^1.0.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.2",
