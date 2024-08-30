@@ -129,8 +129,10 @@ fetch('https://hack-koespe.bgitu-compass.ru/profile?access_token='+cookies.get("
     .then((response) => response.json())
     .then((json) => {
         user.value = json;
-        console.log(user.value)
+        cookies.set("user_id", json.id);
     });
+
+console.log(cookies.get('user_id'))
 
 
 const produceAnAlert = (placeId) => {
@@ -155,7 +157,7 @@ const buttonPaymentUrl = ref('');
 
 function openPaymentPopup(guideId, placeId) {
   popupPayment.value = true;
-  let paymentData = {guide_id: guideId, place_id: placeId, user_id: user.value.id,
+  let paymentData = {guide_id: guideId, place_id: placeId, user_id: cookies.get("user_id"),
     amount: 500
   }
 
@@ -170,7 +172,7 @@ function openPaymentPopup(guideId, placeId) {
     .then((response) => response.json())
     .then((json) => {
         buttonPaymentUrl.value = json.payment_url;
-        f7.view.main.router.navigate(buttonPaymentUrl.value);
+        //f7.view.main.router.navigate(buttonPaymentUrl.value);
     });
 };
 
