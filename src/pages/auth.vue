@@ -27,7 +27,7 @@
             </f7-list-input>
             <div style="padding-left: 15px; display: flex; gap: 10px">
                     <f7-toggle v-model:checked="gidLogin" />
-                    <p>Вход для гида</p>
+                    <p>Войти как гид</p>
                 </div>
               </f7-list>
               
@@ -41,15 +41,7 @@
                 
                 
               </f7-list>
-    <f7-block-title>Данные для входа</f7-block-title>
-    <f7-block strong outline inset>
-      <p>
-        Админ: admin@mail.ru / admin_password
-      </p>
-      <p>
-        Пользователь: user@mail.ru / user_password
-      </p>
-    </f7-block>
+
         </f7-login-screen>
     </f7-block>
     </f7-page>

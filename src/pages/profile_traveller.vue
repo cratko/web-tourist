@@ -31,10 +31,35 @@
                 </div>
     </f7-block>
 
+    <f7-block-title>Ваши туры</f7-block-title>
+    <f7-block strong-ios outline-ios>
+        <f7-list media-list dividers-ios strong-ios outline-ios>
+      <f7-list-item
+        link="#"
+        v-model="tours"
+        v-for="tour in tours"
+        :title="tour.place.title"
+        :subtitle="tour.guide.fullname"
+        :text="tour.guide.phone_number"
+        :after="tour.commentary"
+      >
+        <template #media>
+          <img
+            style="border-radius: 8px"
+            :src="tour.place.photos_url[0]"
+            width="80"
+          />
+        </template>
+      </f7-list-item>
+      
+    </f7-list>
+    </f7-block>
+
     <f7-block-title>Статистика маршрутов (км)</f7-block-title>
     <f7-block strong-ios outline-ios>
        
     </f7-block>
+    
     <Chart
       :size="{ width: 500, height: 420 }"
       :data="data"
@@ -73,6 +98,7 @@
       </template>
   
     </Chart>
+
     </f7-page>
 </template>
 
@@ -81,10 +107,11 @@ import { useCookies } from "vue3-cookies";
 import {ref} from 'vue';
   import { Chart, Grid, Line } from 'vue3-charts'
   import { f7 } from 'framework7-vue';
-  
+
 const { cookies } = useCookies();
 
 const user = ref({});
+const tours = ref();
 
 function logout() {
       cookies.remove("access_token");
@@ -99,6 +126,16 @@ fetch('https://hack-koespe.bgitu-compass.ru/profile?access_token='+cookies.get("
     .then((response) => response.json())
     .then((json) => {
         user.value = json;
+        console.log(json)
+        fetch('https://hack-vika.bgitu-compass.ru/applications_of_guide/'+user.value.id, { 
+        method: "GET",
+        headers: { 'Content-type': 'application/json; charset=UTF-8'},
+        })
+        .then((response) => response.json())
+        .then((json) => {
+            tours.value = json;
+            console.log(json);
+        });
     });
 
     const data = ref([
