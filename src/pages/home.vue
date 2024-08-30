@@ -2,6 +2,8 @@
 import Navbar from '../components/navbar.vue';
 import Map from '../components/map.vue';
 import Model from '../components/model.vue';
+import Routes from '../components/routes.vue';
+
 import {ref, watch} from 'vue';
 
 const radius = ref(50);
@@ -144,7 +146,8 @@ export default {
   components: {
     Navbar,
     Map,
-    Model
+    Model,
+    Routes
   },
   methods: {
     
@@ -159,6 +162,9 @@ export default {
   <f7-popup v-model:opened="popupOpened" class="demo-popup" v-if="openedPlace" tablet-fullscreen="true">
       <f7-page>
         <f7-navbar :title="openedPlace.title">
+          <f7-nav-left>
+            <i class="f7-icons" style='color: #71723a; padding-left: 15px'>info_circle</i>
+          </f7-nav-left>
           <f7-nav-right>
             <f7-link popup-close @click="openedPlace = false"><i class="f7-icons">
                 multiply</i></f7-link>
@@ -253,10 +259,6 @@ export default {
         
         <f7-block strong inset class="main-block">
 
-            <f7-block-title>
-              Strong Inset Block
-            </f7-block-title>
-
             <f7-toolbar bottom tabbar>
               <f7-link tab-link="#tab-1" tab-link-active class='left-menu-link'>
                 <i class="f7-icons">map_pin_ellipse</i>
@@ -266,11 +268,17 @@ export default {
                 <i class="f7-icons">location_fill</i>
                 Маршруты
               </f7-link>
+              
+              <f7-link tab-link="#tab-3" class='left-menu-link'>
+                <i class="f7-icons">
+                  square_favorites</i>
+                Задания <f7-badge style='background-color:#48473b !important'>2</f7-badge>
+              </f7-link>
             </f7-toolbar>
 
             <f7-tabs>
               <f7-tab id="tab-1" class="page-content" tab-active> 
-                <f7-button round popup-open=".filtersPopup">
+                <f7-button round popup-open=".filtersPopup" class='filter-button'>
                   <i class="f7-icons">
                     slider_horizontal_3</i>Фильтры
                   </f7-button>
@@ -299,10 +307,15 @@ export default {
 
 
               </f7-tab>
+
+              <!-- RoutesTab -->
               <f7-tab id="tab-2" class="page-content">
-                <f7-block>
-                 
-                </f7-block>
+                <Routes/>
+              </f7-tab>
+              
+              <!-- Tasks Tab -->
+              <f7-tab id="tab-3" class="page-content"> 
+                
               </f7-tab>
             </f7-tabs>
 

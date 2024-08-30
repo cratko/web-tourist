@@ -2,6 +2,7 @@
 import HomePage from '../pages/home.vue';
 import AuthPage from '../pages/auth.vue';
 import ProfileTravellerPage from '../pages/profile_traveller.vue';
+import ProfileGuidePage from '../pages/profile_guide.vue';
 
 var routes = [
   {
@@ -15,6 +16,10 @@ var routes = [
   {
     path: '/profile_traveller/',
     component: ProfileTravellerPage,
+  },
+  {
+    path: '/profile_guide/',
+    component: ProfileGuidePage,
   },
 ];
 

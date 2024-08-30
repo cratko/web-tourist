@@ -102,7 +102,28 @@ import { useCookies } from "vue3-cookies";
         this.isLoading = true;
 
         if (this.gidLogin) {
-            f7.dialog.alert("В работе");
+            fetch('https://hack-vika.bgitu-compass.ru/auth', {
+        method: 'POST',
+        body: JSON.stringify(user),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      })
+        .then((response) => response.json() )
+        .then((json) => {
+          if (json.detail == "Invalid login or password") {
+            f7.dialog.alert("Неправильный логин или пароль");
+            this.isLoading = false;
+          } else {
+            this.cookies.set("access_token", json.access_token);
+            this.cookies.set("role", "guide");
+            f7.view.main.router.navigate("/");
+
+            
+            this.isLoading = false;
+          }
+
+      })
         } else {
 
         

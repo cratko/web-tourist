@@ -1,5 +1,5 @@
 <template>
-    <f7-page name="profile_traveller">
+    <f7-page name="profile_guide">
         <f7-navbar title="Профиль">
           <f7-nav-right>
             <f7-link href="/"><i class="f7-icons">
@@ -31,48 +31,11 @@
                 </div>
     </f7-block>
 
-    <f7-block-title>Статистика маршрутов (км)</f7-block-title>
+    <f7-block-title>Заявки на проведение тура</f7-block-title>
     <f7-block strong-ios outline-ios>
        
     </f7-block>
-    <Chart
-      :size="{ width: 500, height: 420 }"
-      :data="data"
-      :margin="margin"
-      :direction="direction"
-      :axis="axis">
-  
-      <template #layers>
-        <Grid strokeDasharray="2,2" />
-        <Area :dataKeys="['name', 'pl']" type="monotone" :areaStyle="{ fill: 'url(#grad)' }" />
-        <Line
-          :dataKeys="['name', 'pl']"
-          type="monotone"
-          :lineStyle="{
-            stroke: '#71723a'
-          }"
-        />
-        <Marker v-if="marker" :value="1000" label="Mean." color="green" strokeWidth="2" strokeDasharray="6 6" />
-        <defs>
-          <linearGradient id="grad" gradientTransform="rotate(90)">
-            <stop offset="0%" stop-color="#be90ff" stop-opacity="1" />
-            <stop offset="100%" stop-color="white" stop-opacity="0.4" />
-          </linearGradient>
-        </defs>
-      </template>
-  
-      <template #widgets>
-        <Tooltip
-          borderColor="#48CAE4"
-          :config="{
-            pl: { color: '#9f7aea' },
-            avg: { hide: true },
-            inc: { hide: true }
-          }"
-        />
-      </template>
-  
-    </Chart>
+   
     </f7-page>
 </template>
 
@@ -92,7 +55,7 @@ function logout() {
       f7.view.main.router.navigate("/");
 }
 
-fetch('https://hack-koespe.bgitu-compass.ru/profile?access_token='+cookies.get("access_token"), { 
+fetch('https://hack-vika.bgitu-compass.ru/profile?access_token='+cookies.get("access_token"), { 
     method: "GET",
     headers: { 'Content-type': 'application/json; charset=UTF-8'},
     })

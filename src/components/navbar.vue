@@ -5,10 +5,10 @@
             <f7-link href="./auth/" v-if="role == null"><i class="f7-icons logo-icon">square_arrow_right</i>
                 <span class="right-span">Войти</span>
             </f7-link>
-            <f7-link href="/profile_traveller/" v-if="role != null"><i class="f7-icons logo-icon">person_crop_circle</i> 
+            <f7-link :href="profile_path" v-if="role != null"><i class="f7-icons logo-icon">person_crop_circle</i> 
                 <span class="right-span">Профиль</span>
             </f7-link>
-            <f7-link href="#" v-if="role != null"><i class="f7-icons logo-icon">money_dollar_circle</i> 
+            <f7-link href="/profile_guide." v-if="role != null"><i class="f7-icons logo-icon">money_dollar_circle</i> 
                 <span class="right-span">Бонусы: <span>0</span></span>
             </f7-link>
         </f7-nav-right>
@@ -25,4 +25,11 @@ import {ref} from 'vue';
 const { cookies } = useCookies();
 
 const role = ref(cookies.get('role'));
+const profile_path = ref('');
+if (role.value == 'traveller') {
+    profile_path.value = '/profile_traveller/'
+} else {
+    profile_path.value = '/profile_guide/'
+}
+
 </script>
