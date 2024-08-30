@@ -3,6 +3,7 @@ import Navbar from '../components/navbar.vue';
 import Map from '../components/map.vue';
 import Model from '../components/model.vue';
 import Routes from '../components/routes.vue';
+import Tasks from '../components/tasks.vue';
 
 import {ref, watch} from 'vue';
 
@@ -147,7 +148,8 @@ export default {
     Navbar,
     Map,
     Model,
-    Routes
+    Routes,
+    Tasks
   },
   methods: {
     
@@ -315,7 +317,7 @@ export default {
               
               <!-- Tasks Tab -->
               <f7-tab id="tab-3" class="page-content"> 
-                
+                <Tasks/>
               </f7-tab>
             </f7-tabs>
 

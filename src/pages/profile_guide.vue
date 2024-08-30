@@ -33,9 +33,28 @@
 
     <f7-block-title>Заявки на проведение тура</f7-block-title>
     <f7-block strong-ios outline-ios>
-       
+        <f7-list media-list dividers-ios strong-ios outline-ios>
+      <f7-list-item
+        link="#"
+        v-model="tours"
+        v-for="tour in tours"
+        :title="tour.place.title"
+        :subtitle="tour.user.fullname"
+        :text="tour.user.phone_number"
+        :after="tour.commentary"
+      >
+        <template #media>
+          <img
+            style="border-radius: 8px"
+            :src="tour.place.photos_url[0]"
+            width="80"
+          />
+        </template>
+      </f7-list-item>
+      
+    </f7-list>
     </f7-block>
-   
+    
     </f7-page>
 </template>
 
@@ -46,6 +65,8 @@ import {ref} from 'vue';
   import { f7 } from 'framework7-vue';
   
 const { cookies } = useCookies();
+
+const tours = ref();
 
 const user = ref({});
 
@@ -62,7 +83,19 @@ fetch('https://hack-vika.bgitu-compass.ru/profile?access_token='+cookies.get("ac
     .then((response) => response.json())
     .then((json) => {
         user.value = json;
+
+        
+    fetch('https://hack-vika.bgitu-compass.ru/applications_of_guide/'+user.value.id, { 
+    method: "GET",
+    headers: { 'Content-type': 'application/json; charset=UTF-8'},
+    })
+    .then((response) => response.json())
+    .then((json) => {
+        tours.value = json;
+        console.log(json);
     });
+    });
+
 
     const data = ref([
   { name: 'Jan', pl: 1000, avg: 500, inc: 300 },
